@@ -1,4 +1,4 @@
-import { ArrowLeft, Search, CheckCircle2, ShoppingCart, Lightbulb, Package, QrCode, CreditCard, Banknote, ShieldCheck, SmartphoneNfc } from 'lucide-react';
+import { ArrowLeft, Search, CheckCircle2, ShoppingCart, Lightbulb, Package, QrCode, CreditCard, Banknote, ShieldCheck, SmartphoneNfc, Tag, X } from 'lucide-react';
 import { useState } from 'react';
 
 type Step = 1 | 2 | 3 | 4;
@@ -20,6 +20,7 @@ export function SaleFlow() {
   const [step, setStep] = useState<Step>(1);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'gcash' | 'card'>('cash');
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [discount, setDiscount] = useState<{type: 'percent' | 'fixed' | 'voucher' | 'none', value: number, code?: string}>({ type: 'none', value: 0 });
 
   const handleNext = () => {
     if (step < 4) setStep((prev) => (prev + 1) as Step);
@@ -33,6 +34,7 @@ export function SaleFlow() {
     setStep(1);
     setCart([]);
     setPaymentMethod('cash');
+    setDiscount({ type: 'none', value: 0 });
   };
 
   return (
@@ -58,8 +60,8 @@ export function SaleFlow() {
       <div className="w-full max-w-3xl flex justify-center flex-1">
         {step === 1 && <PaymentStep paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} onNext={handleNext} />}
         {step === 2 && <ItemsStep cart={cart} setCart={setCart} onBack={handleBack} onNext={handleNext} />}
-        {step === 3 && <ReviewStep cart={cart} paymentMethod={paymentMethod} onBack={handleBack} onNext={handleNext} />}
-        {step === 4 && <SuccessStep cart={cart} paymentMethod={paymentMethod} onReset={resetSale} />}
+        {step === 3 && <ReviewStep cart={cart} paymentMethod={paymentMethod} discount={discount} setDiscount={setDiscount} onBack={handleBack} onNext={handleNext} />}
+        {step === 4 && <SuccessStep cart={cart} paymentMethod={paymentMethod} discount={discount} onReset={resetSale} />}
       </div>
       
       {step < 4 && (
@@ -244,8 +246,15 @@ function ItemsStep({ cart, setCart, onBack, onNext }: any) {
   )
 }
 
-function ReviewStep({ cart, paymentMethod, onBack, onNext }: any) {
-  const total = cart.reduce((sum: number, item: CartItem) => sum + (item.price * item.qty), 0);
+function ReviewStep({ cart, paymentMethod, discount, setDiscount, onBack, onNext }: any) {
+  const subtotal = cart.reduce((sum: number, item: CartItem) => sum + (item.price * item.qty), 0);
+  const discountAmount = (discount.type === 'percent' || discount.type === 'voucher') ? subtotal * (discount.value / 100) : discount.type === 'fixed' ? discount.value : 0;
+  const total = Math.max(0, subtotal - discountAmount);
+
+  const [isAddingDiscount, setIsAddingDiscount] = useState(false);
+  const [tempDiscountType, setTempDiscountType] = useState<'percent' | 'fixed' | 'voucher'>('percent');
+  const [tempDiscountValue, setTempDiscountValue] = useState('');
+  const [tempVoucherCode, setTempVoucherCode] = useState('');
 
   return (
     <CardWrapper title="Review Sale" onBack={onBack} onNext={onNext} nextLabel="Confirm & Record Sale">
@@ -307,8 +316,110 @@ function ReviewStep({ cart, paymentMethod, onBack, onNext }: any) {
         </div>
       </div>
       
+      {/* Discount Section */}
+      <div className="mb-6">
+        {!isAddingDiscount && discount.type === 'none' ? (
+          <button 
+            onClick={() => setIsAddingDiscount(true)}
+            className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 font-bold hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+          >
+            <Tag size={18} /> Apply Discount or Voucher
+          </button>
+        ) : discount.type !== 'none' && !isAddingDiscount ? (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex justify-between items-center">
+            <div className="flex items-center gap-3 text-green-700">
+              <Tag size={20} />
+              <div>
+                <div className="font-bold text-sm">
+                  {discount.type === 'voucher' ? `Voucher: ${discount.code}` : 'Discount Applied'}
+                </div>
+                <div className="text-xs font-medium">
+                  {discount.type === 'percent' || discount.type === 'voucher' ? `${discount.value}% off` : `₱${discount.value.toFixed(2)} off`}
+                </div>
+              </div>
+            </div>
+            <button 
+              onClick={() => setDiscount({ type: 'none', value: 0 })}
+              className="text-green-600 hover:bg-green-100 p-1.5 rounded-lg transition-colors"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm animate-in slide-in-from-top-2 fade-in duration-200">
+            <div className="flex justify-between items-center mb-3">
+              <h4 className="font-bold text-gray-900 flex items-center gap-2"><Tag size={16} className="text-blue-600" /> Add Discount</h4>
+              <button onClick={() => setIsAddingDiscount(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
+            </div>
+            <div className="flex gap-2 mb-3 overflow-x-auto pb-1 scrollbar-hide">
+              <button 
+                onClick={() => setTempDiscountType('percent')}
+                className={`flex-1 py-2 px-3 font-bold text-xs md:text-sm rounded-lg border transition-colors whitespace-nowrap ${tempDiscountType === 'percent' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              >Percent (%)</button>
+              <button 
+                onClick={() => setTempDiscountType('fixed')}
+                className={`flex-1 py-2 px-3 font-bold text-xs md:text-sm rounded-lg border transition-colors whitespace-nowrap ${tempDiscountType === 'fixed' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              >Fixed (₱)</button>
+              <button 
+                onClick={() => setTempDiscountType('voucher')}
+                className={`flex-1 py-2 px-3 font-bold text-xs md:text-sm rounded-lg border transition-colors whitespace-nowrap ${tempDiscountType === 'voucher' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              >Voucher</button>
+            </div>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                {tempDiscountType === 'fixed' && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₱</span>}
+                {tempDiscountType === 'voucher' ? (
+                  <input 
+                    type="text" 
+                    value={tempVoucherCode}
+                    onChange={(e) => setTempVoucherCode(e.target.value.toUpperCase())}
+                    placeholder="Enter promo code..."
+                    className="w-full py-2.5 px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-gray-900 uppercase"
+                  />
+                ) : (
+                  <input 
+                    type="number" 
+                    value={tempDiscountValue}
+                    onChange={(e) => setTempDiscountValue(e.target.value)}
+                    placeholder={tempDiscountType === 'percent' ? "e.g. 10" : "e.g. 500"}
+                    className={`w-full py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-gray-900 ${tempDiscountType === 'fixed' ? 'pl-8' : 'px-3'}`}
+                  />
+                )}
+                {tempDiscountType === 'percent' && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">%</span>}
+              </div>
+              <button 
+                onClick={() => {
+                  if (tempDiscountType === 'voucher') {
+                    if (tempVoucherCode.trim()) {
+                      // Apply a generic 15% discount for any valid voucher code for prototype
+                      setDiscount({ type: 'voucher', value: 15, code: tempVoucherCode.trim() });
+                      setIsAddingDiscount(false);
+                    }
+                  } else {
+                    const val = parseFloat(tempDiscountValue);
+                    if (val > 0) {
+                      setDiscount({ type: tempDiscountType, value: val });
+                      setIsAddingDiscount(false);
+                    }
+                  }
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 rounded-lg transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <div className="bg-gray-900 rounded-2xl p-5 text-white shadow-xl shadow-gray-900/10">
-        <div className="flex justify-between text-gray-400 text-sm font-medium mb-1"><span>Subtotal</span><span>₱ {total.toFixed(2)}</span></div>
+        <div className="flex justify-between text-gray-400 text-sm font-medium mb-1"><span>Subtotal</span><span>₱ {subtotal.toFixed(2)}</span></div>
+        {discountAmount > 0 && (
+          <div className="flex justify-between text-green-400 text-sm font-medium mb-1">
+            <span>{discount.type === 'voucher' ? `Voucher (${discount.code})` : `Discount (${discount.type === 'percent' ? discount.value + '%' : 'Fixed'})`}</span>
+            <span>- ₱ {discountAmount.toFixed(2)}</span>
+          </div>
+        )}
         <div className="flex justify-between text-gray-400 text-sm font-medium mb-3"><span>Tax</span><span>₱ 0.00</span></div>
         <div className="flex justify-between items-center pt-3 border-t border-gray-700">
           <span className="font-bold text-gray-300">Total Amount</span>
@@ -319,8 +430,10 @@ function ReviewStep({ cart, paymentMethod, onBack, onNext }: any) {
   )
 }
 
-function SuccessStep({ cart, paymentMethod, onReset }: any) {
-  const total = cart.reduce((sum: number, item: CartItem) => sum + (item.price * item.qty), 0);
+function SuccessStep({ cart, paymentMethod, discount, onReset }: any) {
+  const subtotal = cart.reduce((sum: number, item: CartItem) => sum + (item.price * item.qty), 0);
+  const discountAmount = (discount.type === 'percent' || discount.type === 'voucher') ? subtotal * (discount.value / 100) : discount.type === 'fixed' ? discount.value : 0;
+  const total = Math.max(0, subtotal - discountAmount);
 
   return (
     <CardWrapper title="Sale Complete" hideFooter>
@@ -336,7 +449,14 @@ function SuccessStep({ cart, paymentMethod, onReset }: any) {
         <div className="flex justify-between"><span className="text-gray-500 font-medium">Receipt #</span><span className="font-bold text-gray-900 uppercase">S-{(new Date().getTime().toString().slice(5))}</span></div>
         <div className="flex justify-between"><span className="text-gray-500 font-medium">Payment Method</span><span className="font-bold text-gray-900 capitalize">{paymentMethod === 'gcash' ? 'GCash' : paymentMethod}</span></div>
         <div className="flex justify-between"><span className="text-gray-500 font-medium">Time</span><span className="font-bold text-gray-900 text-right">{new Date().toLocaleString()}</span></div>
-        <div className="pt-3 mt-3 border-t border-gray-100 flex justify-between items-center"><span className="text-gray-500 font-medium">Amount Paid</span><span className="font-black text-blue-600 text-lg">₱ {total.toLocaleString('en-US', {minimumFractionDigits: 2})}</span></div>
+        
+        <div className="pt-3 mt-3 border-t border-gray-100 space-y-2">
+          <div className="flex justify-between text-xs"><span className="text-gray-500 font-medium">Subtotal</span><span className="font-bold text-gray-900">₱ {subtotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</span></div>
+          {discountAmount > 0 && (
+            <div className="flex justify-between text-xs"><span className="text-green-600 font-medium">{discount.type === 'voucher' ? `Voucher (${discount.code})` : 'Discount'}</span><span className="font-bold text-green-600">- ₱ {discountAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</span></div>
+          )}
+          <div className="flex justify-between items-center pt-2"><span className="text-gray-500 font-medium">Amount Paid</span><span className="font-black text-blue-600 text-lg">₱ {total.toLocaleString('en-US', {minimumFractionDigits: 2})}</span></div>
+        </div>
       </div>
 
       <div className="space-y-3 mt-auto">

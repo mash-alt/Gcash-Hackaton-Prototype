@@ -61,7 +61,7 @@ export function AIChatbot({ onNavigate }: { onNavigate: (view: ViewType) => void
           id: Date.now().toString(),
           sender: 'ai',
           text: "I noticed your Brake Pads (Front) are running a bit low on stock. Want me to take you to the inventory page so you can restock?",
-          action: { label: "Manage Inventory", route: "inventory", icon: Package }
+          action: { label: "Manage Inventory", route: "purchases", icon: Package }
         };
       } else if (lowerText.includes('save') || lowerText.includes('buffer') || lowerText.includes('deposit')) {
         aiResponse = {

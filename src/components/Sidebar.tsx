@@ -1,6 +1,6 @@
 import { Home, PlusSquare, FileText, Package, List, Wallet, Trophy, X } from 'lucide-react';
 
-export type ViewType = 'home' | 'sale' | 'expense' | 'inventory' | 'records' | 'gsave' | 'rewards';
+export type ViewType = 'home' | 'sale' | 'purchases' | 'records' | 'gsave' | 'rewards';
 
 export interface SidebarProps {
   currentView: ViewType;
@@ -12,8 +12,7 @@ export function Sidebar({ currentView, onViewChange, onClose }: SidebarProps) {
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', sublabel: 'Go to overview' },
     { id: 'sale', icon: PlusSquare, label: 'Record a Sale', sublabel: 'Record your sales' },
-    { id: 'expense', icon: FileText, label: 'Record an Expense', sublabel: 'Track your spending' },
-    { id: 'inventory', icon: Package, label: 'Inventory & Restock', sublabel: 'Manage items & stock' },
+    { id: 'purchases', icon: Package, label: 'Restock & Expenses', sublabel: 'Manage inventory & bills' },
     { id: 'records', icon: List, label: 'Records', sublabel: 'View all your records' },
     { id: 'gsave', icon: Wallet, label: 'GSave / Buffer Wallet', sublabel: 'Save & grow your funds' },
     { id: 'rewards', icon: Trophy, label: 'GScore & Rewards', sublabel: 'Score, loans & milestones' },

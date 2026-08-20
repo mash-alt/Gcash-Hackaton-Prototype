@@ -3,8 +3,7 @@ import { Menu, Search, Bell, User, Settings, LogOut, Package, Trophy, Sparkles, 
 import { Sidebar, ViewType } from './components/Sidebar';
 import { RecordsView } from './components/RecordsView';
 import { GSaveView } from './components/GSaveView';
-import { ExpenseFlow } from './components/ExpenseFlow';
-import { InventoryView } from './components/InventoryView';
+import { SmartRestockView } from './components/SmartRestockView';
 import { SaleFlow } from './components/SaleFlow';
 import { RewardsView } from './components/RewardsView';
 import { DashboardHome } from './components/DashboardHome';
@@ -25,10 +24,8 @@ export default function App() {
         return <RecordsView />;
       case 'gsave':
         return <GSaveView />;
-      case 'expense':
-        return <ExpenseFlow />;
-      case 'inventory':
-        return <InventoryView />;
+      case 'purchases':
+        return <SmartRestockView />;
       case 'rewards':
         return <RewardsView />;
       case 'sale':

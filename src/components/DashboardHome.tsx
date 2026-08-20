@@ -51,7 +51,7 @@ export function DashboardHome({ onNavigate }: { onNavigate: (view: any) => void 
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               Quick Actions
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <ShortcutCard 
                 icon={<PlusSquare size={24} />} 
                 title="Record a Sale" 
@@ -60,18 +60,11 @@ export function DashboardHome({ onNavigate }: { onNavigate: (view: any) => void 
                 onClick={() => onNavigate('sale')} 
               />
               <ShortcutCard 
-                icon={<FileText size={24} />} 
-                title="Record an Expense" 
-                desc="Log bills or supplier payments." 
-                color="red" 
-                onClick={() => onNavigate('expense')} 
-              />
-              <ShortcutCard 
                 icon={<Package size={24} />} 
-                title="Manage Inventory" 
-                desc="Accept stock & see what's running low." 
+                title="Restock & Expenses" 
+                desc="Manage inventory & business costs." 
                 color="purple" 
-                onClick={() => onNavigate('inventory')} 
+                onClick={() => onNavigate('purchases')} 
               />
               <ShortcutCard 
                 icon={<List size={24} />} 
