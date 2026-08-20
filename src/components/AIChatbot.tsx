@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Sparkles, MessageCircle, Bot, ArrowRight, Wallet, Package, Trophy } from 'lucide-react';
 import { ViewType } from './Sidebar';
+import chatbotIcon from '../../assets/Gemini_Generated_Image_51vjbz51vjbz51vj.png';
 
 interface Message {
   id: string;
@@ -101,9 +102,8 @@ export function AIChatbot({ onNavigate }: { onNavigate: (view: ViewType) => void
         className={`fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-2xl transition-transform hover:scale-110 flex items-center justify-center z-50 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} bg-white border border-gray-100 overflow-hidden group`}
       >
         <div className="absolute inset-0 bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors"></div>
-        {/* Using the attached image filename as src, fallback to an icon if it fails to load in preview */}
         <img 
-          src="Gemini_Generated_Image_51vjbz51vjbz51vj.png" 
+          src={chatbotIcon} 
           alt="AI Bot" 
           className="w-full h-full object-cover relative z-10"
           onError={(e) => {
@@ -127,7 +127,7 @@ export function AIChatbot({ onNavigate }: { onNavigate: (view: ViewType) => void
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-white/20 border border-white/30 overflow-hidden flex items-center justify-center relative">
                <img 
-                src="Gemini_Generated_Image_51vjbz51vjbz51vj.png" 
+                src={chatbotIcon} 
                 alt="AI Bot" 
                 className="w-full h-full object-cover relative z-10"
                 onError={(e) => {
