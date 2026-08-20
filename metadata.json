@@ -1,0 +1,6 @@
+{
+  "name": "GCash for Business App",
+  "description": "A business management tool for sales, expenses, and savings.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
