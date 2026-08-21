@@ -1,20 +1,11 @@
 import { ArrowLeft, Search, CheckCircle2, ShoppingCart, Lightbulb, Package, QrCode, CreditCard, Banknote, ShieldCheck, SmartphoneNfc, Tag, X } from 'lucide-react';
 import { useState } from 'react';
+import { Product } from '../types';
+import { useInventory } from '../lib/inventoryStore';
 
 type Step = 1 | 2 | 3 | 4;
 
-type Product = { id: number; name: string; price: number; stock: number; category: string; };
 type CartItem = Product & { qty: number };
-
-const INVENTORY: Product[] = [
-  { id: 1, name: 'Brake Pad (Front)', price: 250, stock: 12, category: 'Parts' },
-  { id: 2, name: 'Oil Filter', price: 150, stock: 36, category: 'Parts' },
-  { id: 3, name: 'Spark Plug (NGK)', price: 120, stock: 40, category: 'Parts' },
-  { id: 4, name: 'Motorcycle Chain', price: 600, stock: 10, category: 'Parts' },
-  { id: 5, name: 'Honda Beat Drive Belt', price: 350, stock: 15, category: 'Parts' },
-  { id: 6, name: 'Motor Oil (1L)', price: 250, stock: 24, category: 'Oils & Fluids' },
-  { id: 7, name: 'Helmet Visor', price: 450, stock: 8, category: 'Accessories' },
-];
 
 export function SaleFlow() {
   const [step, setStep] = useState<Step>(1);
@@ -22,7 +13,13 @@ export function SaleFlow() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [discount, setDiscount] = useState<{type: 'percent' | 'fixed' | 'voucher' | 'none', value: number, code?: string}>({ type: 'none', value: 0 });
 
+  const { inventory, deductStock } = useInventory();
+
   const handleNext = () => {
+    if (step === 3) {
+      // Deduct stock upon confirming sale
+      deductStock(cart.map(item => ({ id: item.id, qty: item.qty })));
+    }
     if (step < 4) setStep((prev) => (prev + 1) as Step);
   };
 
@@ -59,7 +56,7 @@ export function SaleFlow() {
 
       <div className="w-full max-w-3xl flex justify-center flex-1">
         {step === 1 && <PaymentStep paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} onNext={handleNext} />}
-        {step === 2 && <ItemsStep cart={cart} setCart={setCart} onBack={handleBack} onNext={handleNext} />}
+        {step === 2 && <ItemsStep inventory={inventory} cart={cart} setCart={setCart} onBack={handleBack} onNext={handleNext} />}
         {step === 3 && <ReviewStep cart={cart} paymentMethod={paymentMethod} discount={discount} setDiscount={setDiscount} onBack={handleBack} onNext={handleNext} />}
         {step === 4 && <SuccessStep cart={cart} paymentMethod={paymentMethod} discount={discount} onReset={resetSale} />}
       </div>
@@ -68,13 +65,13 @@ export function SaleFlow() {
         <div className="w-full max-w-5xl mt-12 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 shrink-0">
           <div className="bg-white border border-gray-100 shadow-sm p-4 md:p-6 rounded-2xl flex items-center gap-4">
              <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-full flex items-center justify-center text-white shrink-0"><Lightbulb size={20} className="md:w-6 md:h-6" /></div>
-             <div className="text-gray-700 font-medium text-xs md:text-sm"><strong>Tip:</strong> Use barcode scan to add items faster and reduce errors.</div>
+             <div className="text-gray-700 font-medium text-xs md:text-sm"><strong>Tip:</strong> Use barcode scan or SKU to add items faster and reduce errors.</div>
           </div>
           <div className="bg-blue-50/50 border border-blue-100 p-4 md:p-6 rounded-2xl flex items-center gap-4 text-blue-900">
              <div className="shrink-0"><Package className="text-blue-600 w-8 h-8 md:w-10 md:h-10" /></div>
              <div>
                <div className="font-bold text-sm md:text-lg mb-0.5 md:mb-1 text-blue-700">Inventory is updated automatically</div>
-               <div className="text-gray-600 text-xs md:text-sm">Stock levels are reduced based on items sold.</div>
+               <div className="text-gray-600 text-xs md:text-sm">Stock levels are deducted in real-time upon completing the sale.</div>
              </div>
           </div>
         </div>
@@ -87,10 +84,10 @@ function StepIndicator({ num, title, desc, active, current, color }: any) {
   return (
     <div className={`flex flex-col min-w-[140px] md:min-w-0 md:flex-1 ${!active && 'opacity-40'}`}>
       <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
-        <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center font-bold text-xs md:text-sm shrink-0 transition-colors ${current ? `bg-${color}-600 text-white shadow-md` : active ? `bg-${color}-100 text-${color}-600` : 'bg-gray-200 text-gray-500'}`}>
+        <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center font-bold text-xs md:text-sm shrink-0 transition-colors ${current ? `bg-blue-600 text-white shadow-md` : active ? `bg-blue-100 text-blue-600` : 'bg-gray-200 text-gray-500'}`}>
           {num}
         </div>
-        <div className={`font-bold text-xs md:text-base whitespace-nowrap md:whitespace-normal transition-colors ${current ? `text-${color}-600` : active ? 'text-gray-900' : 'text-gray-500'}`}>{title}</div>
+        <div className={`font-bold text-xs md:text-base whitespace-nowrap md:whitespace-normal transition-colors ${current ? `text-blue-600` : active ? 'text-gray-900' : 'text-gray-500'}`}>{title}</div>
       </div>
       <div className="hidden md:block text-xs text-gray-500 pl-11">{desc}</div>
     </div>
@@ -158,15 +155,15 @@ function PaymentStep({ paymentMethod, setPaymentMethod, onNext }: any) {
   )
 }
 
-function ItemsStep({ cart, setCart, onBack, onNext }: any) {
+function ItemsStep({ inventory, cart, setCart, onBack, onNext }: { inventory: Product[], cart: CartItem[], setCart: any, onBack: any, onNext: any }) {
   const [filter, setFilter] = useState('All');
   const [search, setSearch] = useState('');
 
-  const categories = ['All', 'Parts', 'Accessories', 'Oils & Fluids'];
+  const categories = ['All', ...Array.from(new Set(inventory.map(i => i.category)))];
   
-  const filteredInventory = INVENTORY.filter(item => 
+  const filteredInventory = inventory.filter(item => 
     (filter === 'All' || item.category === filter) &&
-    item.name.toLowerCase().includes(search.toLowerCase())
+    (item.name.toLowerCase().includes(search.toLowerCase()) || (item.sku && item.sku.toLowerCase().includes(search.toLowerCase())))
   );
 
   const handleUpdateQty = (product: Product, delta: number) => {
@@ -190,13 +187,13 @@ function ItemsStep({ cart, setCart, onBack, onNext }: any) {
   return (
     <CardWrapper title="Select Items" onBack={onBack} onNext={onNext} nextDisabled={cart.length === 0}>
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         <input 
           type="text" 
-          placeholder="Search parts or scan barcode" 
+          placeholder="Search parts or scan barcode / SKU" 
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-100 text-sm shadow-sm transition-all" 
+          className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:border-blue-500 focus:ring-blue-100 text-sm shadow-sm transition-all font-medium" 
         />
       </div>
       
@@ -205,7 +202,7 @@ function ItemsStep({ cart, setCart, onBack, onNext }: any) {
           <button 
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`px-4 py-1.5 font-bold rounded-full whitespace-nowrap transition-colors ${filter === cat ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
+            className={`px-4 py-1.5 font-bold rounded-full whitespace-nowrap transition-colors text-xs ${filter === cat ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`}
           >
             {cat}
           </button>
@@ -215,8 +212,8 @@ function ItemsStep({ cart, setCart, onBack, onNext }: any) {
       <div className="mb-6 flex-1 overflow-y-auto min-h-[250px]">
          <div className="flex text-xs font-bold text-gray-400 mb-3 border-b border-gray-200 pb-2 uppercase tracking-wider px-2">
             <div className="flex-1">Item</div>
-            <div className="w-16 text-right hidden sm:block">Price</div>
-            <div className="w-12 text-center hidden sm:block">Stock</div>
+            <div className="w-20 text-right hidden sm:block">Price</div>
+            <div className="w-16 text-center hidden sm:block">Stock</div>
             <div className="w-24 text-center">Qty</div>
          </div>
          <div className="space-y-2">
@@ -233,7 +230,7 @@ function ItemsStep({ cart, setCart, onBack, onNext }: any) {
                )
             })}
             {filteredInventory.length === 0 && (
-              <div className="text-center py-8 text-gray-400 font-medium">No items found.</div>
+              <div className="text-center py-8 text-gray-400 font-medium">No items found matching your search.</div>
             )}
          </div>
       </div>
@@ -391,7 +388,6 @@ function ReviewStep({ cart, paymentMethod, discount, setDiscount, onBack, onNext
                 onClick={() => {
                   if (tempDiscountType === 'voucher') {
                     if (tempVoucherCode.trim()) {
-                      // Apply a generic 15% discount for any valid voucher code for prototype
                       setDiscount({ type: 'voucher', value: 15, code: tempVoucherCode.trim() });
                       setIsAddingDiscount(false);
                     }
@@ -442,7 +438,7 @@ function SuccessStep({ cart, paymentMethod, discount, onReset }: any) {
           <CheckCircle2 size={48} strokeWidth={2.5} />
         </div>
         <h2 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">Payment Successful</h2>
-        <p className="text-gray-500 font-medium">The sale has been recorded to your history.</p>
+        <p className="text-gray-500 font-medium">The sale has been recorded to your history and inventory updated.</p>
       </div>
 
       <div className="space-y-4 text-sm mb-8 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
@@ -498,15 +494,17 @@ function ItemRow({ product, qty, onUpdate }: any) {
     <div className="flex items-center p-2 rounded-xl hover:bg-white transition-colors border border-transparent hover:border-gray-100 hover:shadow-sm">
       <div className="flex-1 flex items-center gap-3 pr-2 min-w-0">
          <div className="w-10 h-10 bg-gray-100 border border-gray-200 rounded-lg shrink-0 flex items-center justify-center text-lg shadow-sm">
-            📦
+            {product.category === 'Oils & Fluids' ? '🛢️' : product.category === 'Accessories' ? '🏍️' : product.category === 'Tires & Wheels' ? '🛞' : product.category === 'Tools' ? '🔧' : '📦'}
          </div>
          <div className="min-w-0">
            <div className="font-bold text-gray-900 truncate text-sm">{product.name}</div>
            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block sm:hidden">₱{product.price.toFixed(2)} • {product.stock} left</div>
          </div>
       </div>
-      <div className="w-16 text-right font-bold text-gray-900 hidden sm:block">₱{product.price.toFixed(2)}</div>
-      <div className="w-12 text-center text-gray-500 text-xs font-semibold hidden sm:block">{product.stock}</div>
+      <div className="w-20 text-right font-bold text-gray-900 hidden sm:block">₱{product.price.toFixed(2)}</div>
+      <div className="w-16 text-center text-gray-500 text-xs font-semibold hidden sm:block">
+        <span className={product.stock <= 5 ? 'text-red-500 font-bold' : ''}>{product.stock}</span>
+      </div>
       <div className="w-24 flex items-center justify-end gap-1">
         {qty > 0 ? (
           <div className="flex items-center bg-blue-50 border border-blue-100 rounded-lg overflow-hidden p-0.5">
