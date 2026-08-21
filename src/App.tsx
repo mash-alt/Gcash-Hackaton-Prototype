@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, Search, Bell, User, Settings, LogOut, Package, Trophy, Sparkles, ShieldCheck } from 'lucide-react';
+import { Menu, Search, Bell, User, Settings, LogOut, Package, Trophy, Sparkles, ShieldCheck, Home, List, QrCode, X } from 'lucide-react';
 import { Sidebar, ViewType } from './components/Sidebar';
 import { RecordsView } from './components/RecordsView';
 import { GSaveView } from './components/GSaveView';
@@ -63,16 +63,10 @@ export default function App() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
-        {/* Top Header */}
-        <header className="bg-white h-16 border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 shrink-0 z-40 shadow-sm relative">
+        {/* Desktop Top Header (Hidden on Mobile) */}
+        <header className="hidden lg:flex bg-white h-16 border-b border-gray-200 items-center justify-between px-8 shrink-0 z-40 shadow-sm relative">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-              className="p-2 -ml-2 rounded-xl text-gray-500 hover:bg-gray-100 hover:text-blue-600 transition-colors lg:hidden"
-            >
-              <Menu size={24} />
-            </button>
-            <div className="hidden sm:flex relative">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <input 
                 type="text" 
@@ -132,7 +126,7 @@ export default function App() {
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="p-4 border-b border-gray-100 bg-gradient-to-br from-blue-50 to-indigo-50">
-                    <div className="font-bold text-gray-900">Moses Zach</div>
+                    <div className="font-bold text-gray-900">Kristine</div>
                     <div className="text-xs text-gray-500 truncate">moseszachfsabido@gmail.com</div>
                     <div className="mt-2 inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
                       <Trophy size={10} /> Pro Tier
@@ -153,9 +147,108 @@ export default function App() {
         </header>
 
         {/* Scrollable View Content */}
-        <main className="flex-1 overflow-y-auto relative">
+        <main className="flex-1 overflow-y-auto relative pb-20 lg:pb-0">
           {renderView()}
         </main>
+        
+        {/* Mobile Bottom Navigation (GCash Style) */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex justify-between items-end pb-safe shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
+          <button 
+            onClick={() => setCurrentView('home')} 
+            className={`flex-1 flex flex-col items-center gap-1.5 py-3 ${currentView === 'home' ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+          >
+            <Home size={22} strokeWidth={currentView === 'home' ? 2.5 : 2} />
+            <span className="text-[10px] font-bold tracking-wide">Home</span>
+          </button>
+          
+          <button 
+            onClick={() => setCurrentView('records')} 
+            className={`flex-1 flex flex-col items-center gap-1.5 py-3 ${currentView === 'records' ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+          >
+            <List size={22} strokeWidth={currentView === 'records' ? 2.5 : 2} />
+            <span className="text-[10px] font-bold tracking-wide">Records</span>
+          </button>
+          
+          {/* Floating Center Action Button */}
+          <div className="flex-1 flex flex-col items-center justify-center relative h-full">
+            <button 
+              onClick={() => setCurrentView('sale')} 
+              className="absolute bottom-4 w-16 h-16 bg-blue-600 rounded-full flex flex-col items-center justify-center text-white border-4 border-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] transform transition-transform active:scale-95"
+            >
+              <QrCode size={26} strokeWidth={2.5} />
+            </button>
+          </div>
+          
+          <button 
+            onClick={() => {
+              setIsNotifOpen(!isNotifOpen);
+              setIsProfileOpen(false);
+              setHasUnreadNotifs(false);
+            }} 
+            className={`flex-1 flex flex-col items-center gap-1.5 py-3 relative ${isNotifOpen ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+          >
+            <Bell size={22} strokeWidth={isNotifOpen ? 2.5 : 2} />
+            {hasUnreadNotifs && <span className="absolute top-3 right-1/4 w-2 h-2 bg-red-500 rounded-full border border-white"></span>}
+            <span className="text-[10px] font-bold tracking-wide">Inbox</span>
+          </button>
+          
+          <button 
+            onClick={() => {
+              setIsProfileOpen(!isProfileOpen);
+              setIsNotifOpen(false);
+            }} 
+            className={`flex-1 flex flex-col items-center gap-1.5 py-3 ${isProfileOpen ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+          >
+            <User size={22} strokeWidth={isProfileOpen ? 2.5 : 2} />
+            <span className="text-[10px] font-bold tracking-wide">Profile</span>
+          </button>
+        </div>
+        
+        {/* Mobile Modals for Nav Items */}
+        {isNotifOpen && (
+          <div className="lg:hidden fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-gray-900/40 backdrop-blur-sm transition-opacity">
+            <div className="bg-white w-full sm:w-80 sm:rounded-3xl rounded-t-3xl max-h-[80vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom">
+              <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 className="font-bold text-gray-900 text-lg">Notifications</h3>
+                <button onClick={() => setIsNotifOpen(false)} className="p-2 -mr-2 text-gray-400 hover:text-gray-600 rounded-full">
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="overflow-y-auto divide-y divide-gray-50 flex-1">
+                <NotifItem icon={<Package size={16} className="text-red-500"/>} title="Low Stock Alert" desc="Brake Pads (Front) is running low." time="10 min ago" unread={true} />
+                <NotifItem icon={<Trophy size={16} className="text-amber-500"/>} title="GScore Increased" desc="You earned +15 points for hitting 100 sales!" time="2 hrs ago" unread={true} />
+                <NotifItem icon={<Sparkles size={16} className="text-purple-500"/>} title="New AI Insights" desc="Check your dashboard for today's summary." time="Yesterday" unread={false} />
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {isProfileOpen && (
+          <div className="lg:hidden fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-gray-900/40 backdrop-blur-sm transition-opacity">
+            <div className="bg-white w-full sm:w-80 sm:rounded-3xl rounded-t-3xl max-h-[80vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom">
+              <div className="p-6 border-b border-gray-100 bg-gradient-to-br from-blue-600 to-blue-800 text-white flex justify-between items-start">
+                <div>
+                  <div className="font-bold text-xl">Kristine</div>
+                  <div className="text-sm text-blue-100 mt-1">moseszachfsabido@gmail.com</div>
+                  <div className="mt-3 inline-flex items-center gap-1 bg-amber-400 text-amber-900 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                    <Trophy size={12} /> Pro Tier
+                  </div>
+                </div>
+                <button onClick={() => setIsProfileOpen(false)} className="p-2 -mr-2 text-white/70 hover:text-white rounded-full bg-white/10">
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="p-3">
+                <ProfileMenuItem icon={<User size={18}/>} label="My Account" onClick={() => setIsProfileOpen(false)} />
+                <ProfileMenuItem icon={<Settings size={18}/>} label="Business Settings" onClick={() => setIsProfileOpen(false)} />
+                <ProfileMenuItem icon={<ShieldCheck size={18}/>} label="Privacy & Security" onClick={() => setIsProfileOpen(false)} />
+              </div>
+              <div className="p-3 border-t border-gray-100 bg-gray-50">
+                <ProfileMenuItem icon={<LogOut size={18}/>} label="Log Out" color="text-red-600 hover:bg-red-50" onClick={() => setIsProfileOpen(false)} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Global AI Chatbot */}
@@ -179,7 +272,7 @@ function NotifItem({ icon, title, desc, time, unread }: any) {
 
 function ProfileMenuItem({ icon, label, color = "text-gray-700 hover:bg-gray-100 hover:text-blue-600", onClick }: any) {
   return (
-    <button onClick={onClick} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${color}`}>
+    <button onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-colors ${color}`}>
       {icon}
       {label}
     </button>

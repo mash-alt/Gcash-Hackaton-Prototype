@@ -1,177 +1,167 @@
-import { Sparkles, PlusSquare, FileText, Package, List, Wallet, Trophy, TrendingUp, ArrowRight, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Search, Bell, HeadphonesIcon, QrCode, Calendar, Truck, FileText, ClipboardList, Wallet, Package, ChevronRight, Sparkles, PlusSquare, List, Trophy } from 'lucide-react';
 
 export function DashboardHome({ onNavigate }: { onNavigate: (view: any) => void }) {
   return (
-    <div className="flex-1 p-4 lg:p-8 overflow-y-auto bg-gray-50/50">
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-blue-900 mb-2">Good morning, Boss! 👋</h1>
-        <p className="text-gray-600 font-medium text-sm md:text-base">Here's what's happening with your business today.</p>
+    <div className="flex-1 overflow-y-auto bg-gray-50 pb-8 animate-in fade-in duration-300">
+      {/* Mobile GCash Header / Desktop Banner */}
+      <div className="bg-blue-600 px-4 pt-4 pb-20 lg:rounded-b-[2rem] lg:pb-16 relative overflow-hidden">
+        {/* Subtle background pattern/gradient */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-400/20 rounded-full blur-[50px] pointer-events-none"></div>
+
+        {/* Top Bar (Mobile Only, or Desktop unified) */}
+        <div className="flex justify-between items-center mb-6 relative z-10">
+          <div className="flex items-center gap-2 text-white">
+            <img 
+              src="/logo.png" 
+              alt="Logo Placeholder" 
+              className="w-12 h-12 object-contain bg-white/20 rounded-full flex items-center justify-center text-[10px] text-white text-center italic" 
+            />
+            <span className="font-semibold tracking-wide">GCash for Business</span>
+          </div>
+          <div className="flex items-center gap-5 text-white">
+            <HeadphonesIcon size={22} className="opacity-90 hover:opacity-100 cursor-pointer transition-opacity" />
+            <div className="relative cursor-pointer">
+              <Bell size={22} className="opacity-90 hover:opacity-100 transition-opacity" />
+              <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-bold border border-blue-600">3</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="relative mb-2 max-w-2xl mx-auto lg:mx-0 z-10">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <input 
+            type="text" 
+            placeholder="Search Business" 
+            className="w-full pl-11 pr-12 py-3 bg-white rounded-xl text-sm font-medium outline-none text-gray-900 shadow-sm focus:ring-2 focus:ring-blue-400 transition-shadow"
+          />
+          <QrCode className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-blue-600 transition-colors" size={20} />
+        </div>
       </div>
 
-      {/* AI Daily Insight - Human Friendly */}
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-6 md:p-8 shadow-xl shadow-blue-900/10 mb-8 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/10 blur-[60px] rounded-full pointer-events-none"></div>
-        <div className="absolute right-10 bottom-10 text-white/5 pointer-events-none">
-          <Sparkles size={160} />
+      {/* Overlapping Balance Card */}
+      <div className="px-4 -mt-10 relative z-20 max-w-2xl mx-auto lg:max-w-none lg:mx-8">
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex justify-between items-center relative overflow-hidden group hover:shadow-md transition-shadow cursor-pointer">
+          <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-blue-50/80 to-transparent -z-10 skew-x-12 transform origin-bottom"></div>
+          <div>
+            <div className="text-xs text-gray-500 font-bold mb-1 uppercase tracking-wider">Kristine's Business</div>
+            <div className="text-2xl lg:text-3xl font-black text-gray-900">₱ 4,500.00</div>
+          </div>
+          <div className="relative">
+            <div className="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center relative z-10 shadow-sm border border-blue-100 group-hover:scale-105 transition-transform">
+               <Wallet className="text-blue-600" size={30} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions Grid (Today & Business) */}
+      <div className="px-4 mt-8 max-w-2xl mx-auto lg:max-w-none lg:mx-8">
+        <div className="flex justify-between items-center mb-5">
+          <h3 className="font-bold text-gray-900 text-lg">Today & Business</h3>
+          <button className="text-sm text-blue-600 font-bold flex items-center hover:text-blue-800 transition-colors">See All <ChevronRight size={16} /></button>
         </div>
         
-        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-6">
-          <div className="bg-white/20 backdrop-blur-md p-4 rounded-2xl shrink-0 border border-white/20">
-            <Sparkles size={32} className="text-white" />
-          </div>
-          <div className="flex-1 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest text-blue-100 border border-white/20">
-                Daily AI Insight
-              </span>
-              <span className="text-blue-200 text-sm font-medium">Just now</span>
-            </div>
-            <h2 className="text-xl md:text-2xl font-bold mb-3 leading-tight">
-              You're doing great! You made <span className="text-green-300">₱4,500</span> today.
-            </h2>
-            <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-3xl">
-              That's <strong>20% higher</strong> than your usual Tuesday! Your expenses are low, meaning you get to keep most of your earnings. Your best seller today was the <strong>Brake Pad (Front)</strong>. We suggest moving ₱1,000 to your GSave buffer to keep growing your safety net.
-            </p>
-          </div>
-          <button 
+        <div className="grid grid-cols-4 lg:grid-cols-8 gap-y-6 gap-x-2">
+          <GridAction icon={<PlusSquare size={22} />} label="Record Sale" onClick={() => onNavigate('sale')} />
+          <GridAction icon={<Package size={22} />} label="Restock" onClick={() => onNavigate('purchases')} />
+          <GridAction icon={<List size={22} />} label="Records" onClick={() => onNavigate('records')} />
+          <GridAction icon={<Wallet size={22} />} label="GSave" onClick={() => onNavigate('gsave')} />
+          <GridAction icon={<Trophy size={22} />} label="Rewards" onClick={() => onNavigate('rewards')} />
+          <GridAction icon={<Calendar size={22} />} label="Statement" onClick={() => {}} />
+          <GridAction icon={<Truck size={22} />} label="Deliveries" onClick={() => {}} />
+          <GridAction icon={<ClipboardList size={22} />} label="Reports" onClick={() => {}} />
+        </div>
+      </div>
+
+      {/* Recent Transactions List */}
+      <div className="px-4 mt-8 max-w-2xl mx-auto lg:max-w-none lg:mx-8 mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-gray-900 text-lg">Recent Transactions</h3>
+          <button className="text-sm text-blue-600 font-bold flex items-center hover:text-blue-800 transition-colors">See All <ChevronRight size={16} /></button>
+        </div>
+        
+        <div className="bg-white rounded-3xl p-2 shadow-sm border border-gray-100">
+          <ListItem 
+            icon={<PlusSquare className="text-green-600" size={20} />} 
+            iconBg="bg-green-100"
+            title="Record a Sale"
+            subtitle="Walk-in Customer"
+            amount="+ ₱ 250.00"
+            amountColor="text-green-600"
+            onClick={() => onNavigate('sale')}
+          />
+          <div className="h-px w-full bg-gray-50 ml-[60px] max-w-[calc(100%-60px)]"></div>
+          <ListItem 
+            icon={<Package className="text-blue-600" size={20} />} 
+            iconBg="bg-blue-100"
+            title="Restock Inventory"
+            subtitle="Brake Pads (Front)"
+            amount="- ₱ 1,250.00"
+            amountColor="text-gray-900"
+            onClick={() => onNavigate('purchases')}
+          />
+          <div className="h-px w-full bg-gray-50 ml-[60px] max-w-[calc(100%-60px)]"></div>
+          <ListItem 
+            icon={<Wallet className="text-indigo-600" size={20} />} 
+            iconBg="bg-indigo-100"
+            title="GSave Deposit"
+            subtitle="Buffer Savings"
+            amount="- ₱ 500.00"
+            amountColor="text-gray-900"
             onClick={() => onNavigate('gsave')}
-            className="shrink-0 bg-white text-blue-600 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors shadow-lg flex items-center gap-2 mt-4 md:mt-0"
-          >
-            Save ₱1,000 Now <ChevronRight size={18} />
+          />
+        </div>
+      </div>
+      
+      {/* AI Insight */}
+      <div className="px-4 mt-6 max-w-2xl mx-auto lg:max-w-none lg:mx-8 pb-4">
+        <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-5 shadow-md relative overflow-hidden flex items-center gap-4 group cursor-pointer" onClick={() => onNavigate('purchases')}>
+          <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 blur-[40px] rounded-full pointer-events-none group-hover:bg-white/20 transition-colors"></div>
+          <div className="bg-white/20 p-3 rounded-2xl shrink-0 backdrop-blur-md border border-white/20">
+            <Sparkles className="text-white" size={24} />
+          </div>
+          <div className="flex-1 text-white z-10">
+            <h4 className="font-bold text-sm mb-0.5 flex items-center gap-2">Daily AI Insight <span className="bg-white/20 text-[9px] uppercase px-2 py-0.5 rounded-full font-black tracking-widest">New</span></h4>
+            <p className="text-xs text-blue-100 leading-relaxed line-clamp-2">You made ₱4,500 today. Brake Pads are selling fast! Consider restocking soon.</p>
+          </div>
+          <button className="shrink-0 text-white z-10 p-2">
+            <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        
-        {/* Left Column: Shortcuts */}
-        <div className="xl:col-span-2 space-y-8">
-          <div>
-            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              Quick Actions
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <ShortcutCard 
-                icon={<PlusSquare size={24} />} 
-                title="Record a Sale" 
-                desc="Punch in a new customer order." 
-                color="blue" 
-                onClick={() => onNavigate('sale')} 
-              />
-              <ShortcutCard 
-                icon={<Package size={24} />} 
-                title="Restock & Expenses" 
-                desc="Manage inventory & business costs." 
-                color="purple" 
-                onClick={() => onNavigate('purchases')} 
-              />
-              <ShortcutCard 
-                icon={<List size={24} />} 
-                title="View Records" 
-                desc="See all past transactions in one place." 
-                color="slate" 
-                onClick={() => onNavigate('records')} 
-              />
-            </div>
-          </div>
-
-          <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-center gap-6">
-            <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center shrink-0">
-              <Trophy size={32} />
-            </div>
-            <div className="flex-1 text-center sm:text-left">
-              <h3 className="font-bold text-gray-900 mb-1">Your GScore is thriving!</h3>
-              <p className="text-sm text-gray-500">You're currently a Pro Tier member with 820 points.</p>
-            </div>
-            <button 
-              onClick={() => onNavigate('rewards')}
-              className="px-6 py-2.5 bg-amber-50 text-amber-600 font-bold rounded-xl hover:bg-amber-100 transition-colors shrink-0 whitespace-nowrap"
-            >
-              View Rewards
-            </button>
-          </div>
-        </div>
-
-        {/* Right Column: Today's Snapshot */}
-        <div className="xl:col-span-1">
-          <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-gray-100 h-full flex flex-col">
-            <h3 className="text-lg font-bold text-gray-900 mb-6">Today's Simple Snapshot</h3>
-            
-            <div className="space-y-6 flex-1">
-              <SnapshotRow 
-                label="Money In (Sales)" 
-                amount="₱ 4,500.00" 
-                color="text-green-600" 
-                indicator="bg-green-100" 
-                trend="Up 20%" 
-              />
-              <div className="w-full h-px bg-gray-100"></div>
-              <SnapshotRow 
-                label="Money Out (Expenses)" 
-                amount="₱ 850.00" 
-                color="text-red-500" 
-                indicator="bg-red-100" 
-                trend="Normal" 
-              />
-              <div className="w-full h-px bg-gray-100"></div>
-              
-              <div className="pt-2">
-                <div className="text-sm text-gray-500 font-medium mb-1">What you get to keep (Net)</div>
-                <div className="text-3xl font-black text-gray-900 mb-3">₱ 3,650.00</div>
-                <div className="flex items-center gap-2 text-sm font-bold text-green-700 bg-green-50 px-3 py-2 rounded-xl">
-                  <CheckCircle2 size={18} /> Great profit margin today!
-                </div>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => onNavigate('records')}
-              className="w-full mt-6 py-3 bg-gray-50 text-gray-700 font-bold rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
-            >
-              See Detailed History <ArrowRight size={18} />
-            </button>
-          </div>
-        </div>
-
-      </div>
     </div>
   );
 }
 
-function ShortcutCard({ icon, title, desc, color, onClick }: any) {
-  const colorMap: Record<string, string> = {
-    blue: 'bg-blue-50 text-blue-600 hover:bg-blue-100 border-blue-100',
-    red: 'bg-red-50 text-red-600 hover:bg-red-100 border-red-100',
-    purple: 'bg-purple-50 text-purple-600 hover:bg-purple-100 border-purple-100',
-    slate: 'bg-slate-50 text-slate-600 hover:bg-slate-100 border-slate-100',
-  };
-
+function GridAction({ icon, label, onClick }: any) {
   return (
-    <div 
-      onClick={onClick}
-      className={`p-6 rounded-2xl border-2 transition-all cursor-pointer bg-white hover:shadow-md group ${colorMap[color].split(' ').filter(c => c.startsWith('border-')).join(' ')}`}
-    >
-      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors ${colorMap[color]}`}>
+    <div onClick={onClick} className="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform">
+      <div className="w-[52px] h-[52px] rounded-2xl bg-blue-50/60 text-blue-600 flex items-center justify-center group-hover:bg-blue-100 transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.02)] border border-blue-100/30">
         {icon}
       </div>
-      <h4 className="font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">{title}</h4>
-      <p className="text-sm text-gray-500 font-medium">{desc}</p>
+      <span className="text-[11px] font-semibold text-gray-700 text-center leading-tight tracking-tight">{label}</span>
     </div>
   )
 }
 
-function SnapshotRow({ label, amount, color, indicator, trend }: any) {
+function ListItem({ icon, iconBg, title, subtitle, amount, amountColor, onClick }: any) {
   return (
-    <div className="flex justify-between items-center">
-      <div className="flex items-center gap-3">
-        <div className={`w-3 h-3 rounded-full ${indicator}`}></div>
+    <div onClick={onClick} className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-gray-50 transition-colors rounded-2xl active:scale-[0.98] transform duration-200">
+      <div className="flex items-center gap-4">
+        <div className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 ${iconBg}`}>
+          {icon}
+        </div>
         <div>
-          <div className="text-sm font-bold text-gray-900">{label}</div>
-          <div className="text-xs text-gray-500">{trend}</div>
+          <div className="font-bold text-gray-900 text-sm mb-0.5">{title}</div>
+          <div className="text-xs text-gray-500 font-medium">{subtitle}</div>
         </div>
       </div>
-      <div className={`font-bold ${color}`}>{amount}</div>
+      <div className={`font-bold text-sm ${amountColor}`}>
+        {amount}
+      </div>
     </div>
   )
 }

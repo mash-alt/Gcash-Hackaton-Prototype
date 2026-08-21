@@ -99,7 +99,7 @@ export function AIChatbot({ onNavigate }: { onNavigate: (view: ViewType) => void
       {/* Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 w-16 h-16 rounded-full shadow-2xl transition-transform hover:scale-110 flex items-center justify-center z-50 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} bg-white border border-gray-100 overflow-hidden group`}
+        className={`fixed bottom-28 lg:bottom-6 right-6 w-16 h-16 rounded-full shadow-2xl transition-transform hover:scale-110 flex items-center justify-center z-50 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'} bg-white border border-gray-100 overflow-hidden group`}
       >
         <div className="absolute inset-0 bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors"></div>
         <img 
@@ -120,7 +120,7 @@ export function AIChatbot({ onNavigate }: { onNavigate: (view: ViewType) => void
 
       {/* Chat Window */}
       <div 
-        className={`fixed bottom-6 right-6 w-[380px] h-[600px] max-h-[85vh] bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col z-50 transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none'}`}
+        className={`fixed bottom-28 lg:bottom-6 right-6 w-[calc(100vw-32px)] sm:w-[380px] h-[600px] max-h-[85vh] bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col z-50 transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-90 opacity-0 pointer-events-none'}`}
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-t-3xl flex items-center justify-between shrink-0">
