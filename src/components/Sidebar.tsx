@@ -1,4 +1,5 @@
 import { Home, PlusSquare, FileText, Package, List, Wallet, Trophy, X } from 'lucide-react';
+import gcashLogo from '../../assets/gcash-logo-png_seeklogo-522261.png';
 
 export type ViewType = 'home' | 'sale' | 'purchases' | 'records' | 'gsave' | 'rewards';
 
@@ -26,8 +27,14 @@ export function Sidebar({ currentView, onViewChange, onClose }: SidebarProps) {
         </button>
       )}
       <div className="p-6">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-blue-700">G</div>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm p-1.5">
+            <img
+              src={gcashLogo}
+              alt="GCash logo"
+              className="w-full h-full object-contain"
+            />
+          </div>
           <span className="text-xl font-bold tracking-tight">GCash</span>
         </div>
         <div className="text-xs text-blue-200 tracking-wider font-semibold">FOR BUSINESS</div>

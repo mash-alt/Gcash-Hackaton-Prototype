@@ -1,4 +1,5 @@
 import { Search, Bell, HeadphonesIcon, QrCode, Calendar, Truck, FileText, ClipboardList, Wallet, Package, ChevronRight, Sparkles, PlusSquare, List, Trophy } from 'lucide-react';
+import gcashLogo from '../../assets/gcash-logo-png_seeklogo-522261.png';
 
 export function DashboardHome({ onNavigate }: { onNavigate: (view: any) => void }) {
   return (
@@ -11,12 +12,14 @@ export function DashboardHome({ onNavigate }: { onNavigate: (view: any) => void 
 
         {/* Top Bar (Mobile Only, or Desktop unified) */}
         <div className="flex justify-between items-center mb-6 relative z-10">
-          <div className="flex items-center gap-2 text-white">
-            <img 
-              src="/logo.png" 
-              alt="Logo Placeholder" 
-              className="w-12 h-12 object-contain bg-white/20 rounded-full flex items-center justify-center text-[10px] text-white text-center italic" 
-            />
+          <div className="flex items-center gap-3 text-white">
+            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm p-1.5">
+              <img 
+                src={gcashLogo} 
+                alt="GCash logo" 
+                className="w-full h-full object-contain" 
+              />
+            </div>
             <span className="font-semibold tracking-wide">GCash for Business</span>
           </div>
           <div className="flex items-center gap-5 text-white">
